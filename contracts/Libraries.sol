@@ -1,4 +1,3 @@
-
 // File: contracts/interfaces/factories/IIdentityFactory.sol
 pragma solidity ^0.5.4;
 
@@ -6,42 +5,6 @@ pragma solidity ^0.5.4;
 contract IIdentityFactory {
     function deploy(address _owner, bytes32[] memory _keys, uint256[] memory _purposes, uint _salt) public returns(address);
 }
-
-// File: contracts/libraries/Encoder.sol
-
-
-
-library Encoder {
-    function getKey(string memory _key) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key)));
-    }
-
-    function getKey(string memory _key1, address _key2) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key1, _key2)));
-    }
-
-    function getKey(string memory _key1, string memory _key2) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key1, _key2)));
-    }
-
-    function getKey(string memory _key1, uint256 _key2) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key1, _key2)));
-    }
-
-    function getKey(string memory _key1, bytes32 _key2) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key1, _key2)));
-    }
-
-    function getKey(string memory _key1, bool _key2) internal pure returns(bytes32) {
-        return bytes32(keccak256(abi.encodePacked(_key1, _key2)));
-    }
-
-}
-
-
-// File: contracts/libraries/ERC165Query.sol
-
-
 
 /// @title ERC165
 /// @author @fulldecent and @jbaylina
@@ -618,7 +581,7 @@ contract KeyManager is PausableI, ERC725 {
         }
 
         if (msg.sender != address(this)) {
-            require(keyHasPurpose(keccak256(abi.encode(msg.sender)), 1), "Sender does not have management key");
+            require(keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 1), "Sender does not have management key");
         }
         
         _addKey(_key, _purpose, _keyType);
@@ -637,7 +600,7 @@ contract KeyManager is PausableI, ERC725 {
         returns (bool success)
     {
         if (msg.sender != address(this)) {
-            require(keyHasPurpose(keccak256(abi.encode(msg.sender)), 1), "Sender does not have management key");
+            require(keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 1), "Sender does not have management key");
         }
         
         KeyStore.Key memory k = allKeys.keyData[_key];
@@ -709,7 +672,7 @@ contract KeyManager is PausableI, ERC725 {
         public
         returns (bool success)
     {
-        require(keyHasPurpose(keccak256(abi.encode(msg.sender)), 2), "Sender does not have action key");
+        require(keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 2), "Sender does not have action key");
 
         emit Approved(_id, _approve);
         bytes memory tmp;
@@ -753,7 +716,7 @@ contract KeyManager is PausableI, ERC725 {
 
         emit ExecutionRequested(executionNonce, _to, _value, _data);
 
-        if (keyHasPurpose(keccak256(abi.encode(msg.sender)), 1) || keyHasPurpose(keccak256(abi.encode(msg.sender)), 2)) {
+        if (keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 1) || keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 2)) {
             approve(executionNonce, true);
         }
 
@@ -792,10 +755,10 @@ contract ClaimManager is KeyManager, ERC735 {
         public
         returns (bytes32 claimRequestId)
     {
-        bytes32 claimId = keccak256(abi.encode(_issuer, _claimType));
+        bytes32 claimId = keccak256(abi.encodePacked(_issuer, _claimType));
 
         if (msg.sender != address(this)) {
-          require(keyHasPurpose(keccak256(abi.encode(msg.sender)), 3), "Sender does not have claim signer key");
+          require(keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 3), "Sender does not have claim signer key");
         }
 
         if (claims[claimId].issuer != _issuer) {
@@ -824,7 +787,7 @@ contract ClaimManager is KeyManager, ERC735 {
 
     function removeClaim(bytes32 _claimId) public returns (bool success) {
         if (msg.sender != address(this)) {
-          require(keyHasPurpose(keccak256(abi.encode(msg.sender)), 3), "Sender does not have claim signer key");
+          require(keyHasPurpose(keccak256(abi.encodePacked(msg.sender)), 3), "Sender does not have claim signer key");
         }
 
         /* uint index; */

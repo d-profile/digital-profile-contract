@@ -1,7 +1,6 @@
 pragma solidity ^0.5.4;
 import "./Libraries.sol";
 
-
 contract Identity is KeyManager, ClaimManager, IIdentity {
     bool isInitialized;
     

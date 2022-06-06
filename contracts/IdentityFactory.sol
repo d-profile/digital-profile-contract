@@ -2,7 +2,6 @@ pragma solidity ^0.5.4;
 import "./Libraries.sol";
 import "./Identity.sol";
 
-
 contract IdentityFactory {
     address implement;
 
@@ -17,7 +16,7 @@ contract IdentityFactory {
         return identity;
     }
 
-    function getAddress(address _owner, bytes32 _salt) public view returns (address) {
+    function getAddress(bytes32 _salt) public view returns (address) {
         return Clones.predictDeterministicAddress(implement, _salt);
     }
 }
