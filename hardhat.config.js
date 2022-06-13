@@ -25,7 +25,7 @@ module.exports = {
     development: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/" || "",
       chainId: process.env.CHAIN_ID ? Number(process.env.CHAIN_ID) : 97,
-      accounts: ["0x6a76d52366a201b88402a32400b5727eaff5483baa5cbbde2ea9a068ca0d3378"]
+      accounts: [process.env.PRIVATE_KEY]
     },
   },
   etherscan: {
